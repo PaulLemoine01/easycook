@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load customtags %}
+{% load humanize %}
+
+
+{% block title %}
+    {{ paginator.count|intcomma }} {{ verbose_name_plural }}
+{% endblock %}
+
+{% block titlebtn %}
+        <a href="{{ create_url }}" class="btn btn-primary" >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Ajouter {{ verbose_name }}
+        </a>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4  col-xl-3">
+            <div class="">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        {% include 'dynamic_search_form.html' %}
+                    </div>
+                </div>
+                {% include 'paginator.html' %}
+            </div>
+        </div>
+        <div class="col-md-8  col-xl-9">
+
+            <form action="{{ request.GET.action }}" method="get">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-vcenter card-table table-hover table-bordered ">
+                            <thead>
+                            <tr>
+                                {% for field in available_list_fields %}
+                                    {% if field.visible %}
+                                        <th class="text-decoration-none nowrap hover-shadow p-0">
+                                            {% if field.ordering %}
+                                                <div class="dropdown w-100 btn-notion">
+                                                    <a href="#" class="d-block dropdown-form text-muted w-100 text-start text-lowercase text-capitalize"
+                                                       data-bs-toggle="dropdown">{{ field.verbose_name }}</a>
+                                                    <div class="dropdown-menu w-100 text-lowercase text-capitalize">
+                                                        <div class="flex flex-column p-1">
+                                                            <div class="">
+                                                                <button class="btn-notion rounded-2">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                         class="icon icon-sm icon-tabler icons-tabler-outline icon-tabler-arrow-up">
+                                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                                        <path d="M12 5l0 14"/>
+                                                                        <path d="M18 11l-6 -6"/>
+                                                                        <path d="M6 11l6 -6"/>
+                                                                    </svg>
+                                                                    Trier par ordre croissant
+                                                                </button>
+                                                            </div>
+                                                            <div class="">
+                                                                <button class="btn-notion rounded-2">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                         class="icon icon-sm icons-tabler-outline icon-tabler-arrow-narrow-down">
+                                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                                        <path d="M12 5l0 14"/>
+                                                                        <path d="M16 15l-4 4"/>
+                                                                        <path d="M8 15l4 4"/>
+                                                                    </svg>
+                                                                    Trier par ordre décroissant
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            {% else %}
+                                                <span class="text-secondary">{{ field.verbose_name }}</span>
+                                            {% endif %}
+                                        </th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for object in object_list %}
+                                <tr class="clickable-row">
+                                    {% for field in available_list_fields %}
+                                        {% if field.visible %}
+                                            <td class="{% if not field.get_internal_type == 'TextField' %}nowrap{% endif %}">
+                                                {{ object|show_field_value:field|safe }}
+                                                {% if forloop.counter == 1 %}
+                                                    <a href="{{ object.get_list_url }}"></a>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                {% if not object_list %}
+                    <div class="card-body py-5 text-center">
+                        <i>Il n'y a rien ici</i>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {% include 'paginator.html' %}
+{% endblock %}
+
+{% block js_extra %}
+
+    <script>
+    </script>
+
+{% endblock %}

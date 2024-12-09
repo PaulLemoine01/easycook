@@ -1,0 +1,9 @@
+{% extends 'generic_form.html' %}
+
+{% block titlebtn %}
+    {% if object.pk %}
+        <a href="{% url 'application:analyse-video' %}?video_uuid={{ object.uuid }}" class="btn btn-outline-dark">
+            Générer la recette
+        </a>
+    {% endif %}
+{% endblock %}

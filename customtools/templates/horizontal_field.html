@@ -1,0 +1,44 @@
+{% load customform %}
+
+{% if field|is_hidden %}
+  {{ field }}
+{% else %}
+  <div class="form-group mb-3 row {% if field.errors %} has-error {% elif field.value %} has-value{% endif %} " id="group_{{ field.name }}">
+    <label class="col-form-label col-3" for="{{ field.id_for_label }}">
+      {{ field.label }}
+      {% if field.field.required %}
+        <span class="required">*</span>
+      {% endif %}
+      {% if field.help_text %}
+        <span class="form-help" data-bs-trigger="hover" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="{{ field.help_text }}">?</span>
+      {% endif %}
+    </label>
+    <div class="col-9">
+      <div>
+        {% if field|is_checkbox %}
+          <div class="form-check">
+            {{ field|addcssclass:'form-check-input' }}
+            <span class="css-control-indicator"></span>
+            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          </div>
+        {% else %}
+          {% if field|is_date_field %}
+            {{ field|addcssclass:"form-control datepicker" }}
+          {% elif field|is_datetime_field %}
+            {{ field|addcssclass:"form-control datepicker" }}
+          {% elif field|is_radio %}
+            {{ field }}
+          {% elif field|is_select %}
+            {{ field|addcssclass:"form-select" }}
+          {% else %}
+            {{ field|addcssclass:"form-control" }}
+          {% endif %}
+        {% endif %}
+
+        {% for error in field.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}

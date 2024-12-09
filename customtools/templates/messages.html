@@ -1,0 +1,22 @@
+<script>
+    toastr.options = {
+        "positionClass": "toast-bottom-left",
+        "timeOut": 0,
+        "extendedTimeOut": 0,
+        "preventDuplicates": true
+
+    }
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'danger' in message.tags %}
+                toastr.error("{{message|safe}}");
+            {% elif 'warning' in message.tags %}
+                toastr.warning("{{message|safe}}");
+            {% elif 'info' in message.tags %}
+                toastr.info("{{message|safe}}");
+            {% else %}
+                toastr.success("{{message|safe}}");
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>

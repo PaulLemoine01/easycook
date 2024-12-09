@@ -1,0 +1,102 @@
+<form action="" method="get" id="searchform" class="imsure">
+    {% if request.GET %}
+        <a href="?" class="btn btn-icon btn-dark position-absolute" style="top:-10px;right:-10px;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                 fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M18 6l-12 12"></path>
+                <path d="M6 6l12 12"></path>
+            </svg>
+        </a>
+    {% endif %}
+
+    {% if request.GET.action %}
+        <input type="hidden" name="action" value="{{ request.GET.action }}">
+    {% endif %}
+    <div id="searchfields">
+        {% include 'search_fields.html' %}
+        <button type="submit" class="btn btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <circle cx="10" cy="10" r="7"></circle>
+                <line x1="21" y1="21" x2="15" y2="15"></line>
+            </svg>
+        </button>
+    </div>
+    <div class="modal modal-blur fade" id="modalSearchForm">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div id="modal-content" class="modal-content">
+                <div class="modal-body">
+                    <label class="form-label">
+                        Order
+                    </label>
+                    <div class="btn-group w-100 mb-4" role="group">
+                        <input type="radio" value="" class="btn-check" name="order" id="btn-ascending">
+                        <label for="btn-ascending" type="button" class="btn btn-sm p-2">Croissant</label>
+                        <input type="radio" value="" class="btn-check" name="order" id="btn-descending">
+                        <label for="btn-descending" type="button" class="btn btn-sm p-2">Décroissant</label>
+                    </div>
+                    <div id="additional_field"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="modal-save">Chercher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="scrollPosition" name="" value="">
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('#modal-save').click(function () {
+            $('#modalSearchForm').find('[id^="group_id"]').each(function () {
+                var id = $(this).attr('id');
+                var matchingElements = $('#searchfields [id="' + id.replace(/__search/g, "") + '"]');
+                matchingElements.each(function () {
+                    matchingElements.remove();
+                });
+            });
+            $('#searchform').submit()
+        });
+
+        $(document).on('click', '.dropdown-form', function (event) {
+
+        })
+        $(document).on('click', '.link-form', function (event) {
+            event.preventDefault();
+            var columnName = $(this).data('column-name');
+            var order = $(this).data('order');
+            var modalTarget = $(this).data('bs-target');
+            var btn_ascending = $("#btn-ascending");
+            var btn_descending = $("#btn-descending");
+
+            btn_ascending.val(columnName).prop('checked', order === columnName);
+            btn_descending.val('-' + columnName).prop('checked', order === '-' + columnName);
+
+            $.ajax({
+                url: window.location.href,
+                type: 'POST',
+                data: {
+                    column_name: columnName,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function (response) {
+                    $('#additional_field').html(response["form"])
+                    $(modalTarget).modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        });
+        var $tableResponsive = $('.table-responsive').first();
+        $tableResponsive.scroll(function () {
+            $('#scrollPosition').val($(this).scrollLeft()).attr('name', 'scrollPosition');
+        });
+        $tableResponsive.scrollLeft(parseInt('{{ request.GET.scrollPosition }}'));
+    })
+</script>

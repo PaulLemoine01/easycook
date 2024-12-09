@@ -1,0 +1,13 @@
+{% with id=widget.attrs.id %}
+  <div {% if id %} id="{{ id }}"{% endif %}{% if widget.attrs.class %} class="{{ widget.attrs.class }}"{% endif %}>
+    {% for group, options, index in widget.optgroups %}
+      {% for option in options %}
+        <div class="form-check form-check-inline d-block d-md-inline-block me-2">
+          <input type="radio" class="form-check-input" name="{{ option.name }}"
+              {% if id %} id="{{ id }}_{{ index }}"{% endif %} value="{{ option.value }}" {% if option.selected %}checked="checked"{% endif %}>
+          <label class="form-check-label" for="{% if id %}{{ id }}_{{ index }}{% endif %}"> {{ option.label }}</label>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+{% endwith %}

@@ -1,0 +1,44 @@
+<a href="#visible_columns_modal" class="btn" type="button" data-bs-toggle="modal">
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/>
+  <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/>
+  </svg>
+  Colonnes visibles</a>
+<form action="" method="post" id="visible_columns_form">{% csrf_token %}
+  <div class="modal modal-blur fade" id="visible_columns_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Manage visible columns</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" class="form-control" id="list_field_search" placeholder="rechercher">
+          </div>
+          <div style="height:60vh;overflow:scroll;">
+            <input type="hidden" name="visible_columns_form" value="true">
+            <table class="card-table table table-hover" id="list_field_table">
+              {% for field in available_list_fields %}
+                <tr>
+                  <td>
+                    <div class="form-check mb-0">
+                      <input type="checkbox" class="form-check-input" id="visible_columns_{{ field.name }}" name="visible_fields" value="{{ field.name }}" {% if field.visible %}checked{% endif %}>
+                      <label class="form-check-label" for="visible_columns_{{ field.name }}">{{ field.verbose_name }}</label>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="selectall">Toutes les colonnes</button>
+          <button type="button" class="btn" id="deselectall">Colonnes par défaut</button>
+          <button type="submit" class="btn btn-primary">Enregistré</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -16,9 +16,20 @@ Including another URLconf
 
 from django.urls import path, include
 from api_auth import views
+from django.contrib import admin
+from django.conf.urls.static import static
+
+
+from server import settings
 
 urlpatterns = [
     path('health/', views.health_check, name='health_check'),
     path('api/auth/', include('api_auth.urls')),
-    path('api/application/', include('application.urls')),
+    path('', include('application.urls')),
+    path('admin/', admin.site.urls),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  Confirmer la suppression
+{% endblock %}
+
+{% block content %}
+  <div class="card card-danger">
+    <div class="card-body">
+      <form action="" method="post">{% csrf_token %}
+        <p>
+          Etes-vous sûr(e) de vouloir supprimer "{{ object }}" ?<br>
+          Les données seront perdues définitivement.
+        </p>
+        <a href="{{ list_url }}" class="btn btn-default">Non</a>
+        <button type="submit" value="Oui" class="btn btn-danger">Oui</button>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js_extra %}
+
+{% endblock %}

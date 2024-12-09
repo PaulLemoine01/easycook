@@ -1,0 +1,129 @@
+{% extends 'generic_list.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4  col-xl-3">
+            <div class="">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        {% include 'dynamic_search_form.html' %}
+                    </div>
+                </div>
+                {% include 'paginator.html' %}
+            </div>
+        </div>
+        <div class="col-md-8  col-xl-9">
+
+            <form action="{{ request.GET.action }}" method="get">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-vcenter card-table table-hover table-bordered ">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-decoration-none nowrap hover-shadow p-0">
+                                    <div class="dropdown w-100 btn-notion">
+                                        <a href="#" class="d-block dropdown-form text-muted w-100 text-start text-lowercase text-capitalize"
+                                           data-bs-toggle="dropdown">Nom</a>
+                                        <div class="dropdown-menu w-100 text-lowercase text-capitalize">
+                                            <div class="flex flex-column p-1">
+                                                <div class="">
+                                                    <button class="btn-notion rounded-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             class="icon icon-sm icon-tabler icons-tabler-outline icon-tabler-arrow-up">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                            <path d="M12 5l0 14"/>
+                                                            <path d="M18 11l-6 -6"/>
+                                                            <path d="M6 11l6 -6"/>
+                                                        </svg>
+                                                        Trier par ordre croissant
+                                                    </button>
+                                                </div>
+                                                <div class="">
+                                                    <button class="btn-notion rounded-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             class="icon icon-sm icons-tabler-outline icon-tabler-arrow-narrow-down">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                            <path d="M12 5l0 14"/>
+                                                            <path d="M16 15l-4 4"/>
+                                                            <path d="M8 15l4 4"/>
+                                                        </svg>
+                                                        Trier par ordre décroissant
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </th>
+                                <th class="text-decoration-none nowrap hover-shadow p-0">
+                                    <div class="dropdown w-100 btn-notion">
+                                        <a href="#" class="d-block dropdown-form text-muted w-100 text-start text-lowercase text-capitalize"
+                                           data-bs-toggle="dropdown">Date de création</a>
+                                        <div class="dropdown-menu w-100 text-lowercase text-capitalize">
+                                            <div class="flex flex-column p-1">
+                                                <div class="">
+                                                    <button class="btn-notion rounded-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             class="icon icon-sm icon-tabler icons-tabler-outline icon-tabler-arrow-up">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                            <path d="M12 5l0 14"/>
+                                                            <path d="M18 11l-6 -6"/>
+                                                            <path d="M6 11l6 -6"/>
+                                                        </svg>
+                                                        Trier par ordre croissant
+                                                    </button>
+                                                </div>
+                                                <div class="">
+                                                    <button class="btn-notion rounded-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                             class="icon icon-sm icons-tabler-outline icon-tabler-arrow-narrow-down">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                            <path d="M12 5l0 14"/>
+                                                            <path d="M16 15l-4 4"/>
+                                                            <path d="M8 15l4 4"/>
+                                                        </svg>
+                                                        Trier par ordre décroissant
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for object in object_list %}
+                                <tr class="clickable-row">
+                                    <td class="nowrap"><span class="avatar avatar-xl" style="background-image: url('{{ object.photo.url }}')"></span></td>
+                                    <td class="{% if not field.get_internal_type == 'TextField' %}nowrap{% endif %} p-2">
+                                        {{ object.nom_singulier }}
+                                        <a href="{{ object.get_list_url }}"></a>
+                                    </td>
+                                    <td class="nowrap p-2">
+                                        {{ object.created_date| date:"d/m/Y" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                {% if not object_list %}
+                    <div class="card-body py-5 text-center">
+                        <i>Il n'y a rien ici</i>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {% include 'paginator.html' %}
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'generic_form.html' %}
+
+{% block head_extra %}
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
+    <style>
+        textarea {
+            width: 100%;
+            padding: 8px 8px;
+            box-sizing: border-box;
+            border: transparent;
+            background-color: white;
+            font-size: 14px;
+            resize: none;
+            border: none;
+            overflow: auto;
+            outline: none;
+
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns with equal width */
+            gap: 10px; /* Space between items (optional) */
+            list-style: none; /* Remove default list styling */
+            padding: 0; /* Remove default padding */
+
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <form id="modelForm" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+                {% if form.errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% for field in form %}
+                    {% include 'horizontal_field.html' %}
+                {% endfor %}
+                {% if object.pk %}
+                    <div class="form-label my-2">Ingrédients</div>
+                    <div class="row " id="quantite-list">
+                        {% for quantite in object.quantites.all %}
+                            <div class="col-4 mb-3">
+                                <input name="quantite" class="bg-muted-lt border-0 p-1 ps-2 text-dark rounded-start-3" size="5" type="text" value="{{ quantite.quantite }}">
+                                <input name="unite" class="bg-muted-lt border-0 p-1 text-dark" size="15" type="text" value="{{ quantite.unite_mesure }}">
+                                <input name="ingredient" class="bg-muted-lt border-0 p-1 pe-2 text-dark rounded-end-3" size="20" type="text" value="{{ quantite.ingredient.nom_singulier }}">
+                                <button type="button" class="delete-quantite-btn btn btn-sm btn-ghost-muted btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x ">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M18 6l-12 12"/>
+                                        <path d="M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        {% endfor %}
+                        <div class="col-4">
+                            <button type="button" class="btn btn-sm rounded-3 p-1 px-2" id="add-quantite-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M12 5l0 14"/>
+                                    <path d="M5 12l14 0"/>
+                                </svg>
+                                Ajouter un ingrédient
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-label my-2">Étapes</div>
+                    <div id="draggable-list-container">
+                        <ul id="draggable-list">
+                            {% for etape in object.etapes.all %}
+                                <li class="border border-dark-subtle border-1 cursor-grab has-value rounded-3 " id="group_tags">
+                                    <div class="card-header bg-muted-lt p-2 rounded-top-3">
+                                        <h4 class="card-title" style="font-size: 15px">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-grain me-1">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M4.5 9.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M9.5 4.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M9.5 14.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M4.5 19.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M14.5 9.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M19.5 4.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M14.5 19.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                                <path d="M19.5 14.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                                            </svg>
+                                            Étape <span class="ordre-etape">{{ etape.ordre }}</span></h4>
+                                        <div class="card-actions">
+                                            <button class="delete-btn btn btn-icon btn-ghost-dark" type="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                     stroke-linecap="round"
+                                                     stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x ">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M18 6l-12 12"/>
+                                                    <path d="M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <textarea name="etape" class="" required rows="3">
+{{ etape.content }}</textarea>
+                                </li>
+                            {% endfor %}
+                            <li class="d-flex justify-content-center align-items-center">
+                                <button type="button" class="btn " id="add-item-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 5l0 14"/>
+                                        <path d="M5 12l14 0"/>
+                                    </svg>
+                                    Ajouter une étape
+                                </button>
+                            </li>
+                        </ul>
+
+                    </div>
+                {% endif %}
+
+                <div class="mb-4 text-end">
+                    <a href="{{ form.instance.get_delete_url }}" class="btn btn-danger">Supprimer</a>
+                    <button type="submit" class="btn btn-primary" id="create">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js_extra %}
+    <script>
+        // JavaScript to enable dragging
+        document.addEventListener("DOMContentLoaded", function () {
+            function renumberItems() {
+                const items = document.querySelectorAll("#draggable-list li");
+                items.forEach((item, index) => {
+                    if (index < items.length - 1) { // Exclut le dernier élément
+                        item.querySelector(".ordre-etape").textContent = `${index + 1}`;
+                    }
+                });
+            }
+
+            new Sortable(document.getElementById("draggable-list"), {
+                animation: 150, // smooth dragging
+                onEnd: renumberItems // Renumérote les éléments après le changement d'ordre
+
+            });
+            document.getElementById("add-item-btn").addEventListener("click", function () {
+                const list = document.getElementById("draggable-list");
+                const lastItem = list.lastElementChild;
+                const newItem = document.createElement("li");
+                newItem.className = "border border-dark-subtle border-1 cursor-grab mb-2 has-value rounded-3";
+                newItem.id = "group_tags"; // Idem à l'existant
+                const currentStep = list.children.length; // Le nombre actuel d'étapes
+                newItem.innerHTML = `
+    <div class="card-header bg-muted-lt p-2 rounded-top-3">
+        <h4 class="card-title" style="font-size: 15px">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-grain me-1">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M4.5 9.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M9.5 4.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M9.5 14.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M4.5 19.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M14.5 9.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M19.5 4.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M14.5 19.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                <path d="M19.5 14.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+            </svg>
+            Etape <span class="ordre-etape">${currentStep}</span>
+        </h4>
+        <div class="card-actions">
+            <button class="delete-btn btn btn-icon btn-ghost-dark" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x ">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M18 6l-12 12"/>
+                    <path d="M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <textarea name="story" class="" required rows="3"></textarea>
+`;
+                list.insertBefore(newItem, lastItem);
+                removeEtape()
+            });
+
+            function removeEtape() {
+                document.querySelectorAll(".delete-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        btn.parentElement.parentElement.parentElement.remove();
+                        renumberItems()
+                    });
+                });
+            }
+
+            function removeQuantite() {
+                document.querySelectorAll(".delete-quantite-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        btn.parentElement.remove();
+                    });
+                });
+            }
+
+            document.getElementById("add-quantite-btn").addEventListener("click", function () {
+                const list = document.getElementById("quantite-list");
+                console.log(list)
+                const lastItem = list.lastElementChild;
+                const newItem = document.createElement("div");
+                newItem.className = "col-4 mb-3";
+                newItem.innerHTML = `
+                    <input name="quantite" class="bg-muted-lt border-0 p-1 ps-2 text-dark rounded-start-3" size="5" type="text" value="">
+                    <input name="unite" class="bg-muted-lt border-0 p-1 text-dark" size="15" type="text" value="">
+                    <input name="ingredient" class="bg-muted-lt border-0 p-1 pe-2 text-dark rounded-end-3" size="20" type="text" value="">
+                    <button type="button" class="delete-quantite-btn btn btn-sm btn-ghost-muted btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x ">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M18 6l-12 12"/>
+                            <path d="M6 6l12 12"/>
+                        </svg>
+                    </button>
+`;
+                list.insertBefore(newItem, lastItem);
+                removeQuantite()
+            });
+
+            removeQuantite()
+
+            removeEtape()
+        });
+    </script>
+
+{% endblock %}

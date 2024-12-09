@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+    {% if form.instance.pk %}
+        {{ form.instance }}
+    {% else %}
+        {{ verbose_name|title }}
+    {% endif %}
+{% endblock %}
+
+{% block titlebtn %}
+{% endblock %}
+
+{% block head_extra %}
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <form id="modelForm" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+                {% if form.errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% for field in form %}
+                    {% include 'horizontal_field.html' %}
+                {% endfor %}
+                <div class="mb-4 text-end">
+                    <a href="{{ form.instance.get_delete_url }}" class="btn btn-danger">Supprimer</a>
+                    <button type="submit" class="btn btn-primary" id="create">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_extra %}
+    <script>
+        $('.flatpickerdate').datepicker({
+            format: 'dd/mm/yyyy',
+            language: 'fr',
+            autoclose: true,
+        });
+
+    </script>
+
+{% endblock %}

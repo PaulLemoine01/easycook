@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,10 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-SECRET_KEY = "r(bf&^w1id_*7l10_rxfuftv_1wmwkvu+)0t!bu5n*1@l$rs!r"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# TODO : SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG") == "True"
 TEST_MODE = True
 
 if DEBUG:
@@ -61,11 +62,15 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'django.contrib.staticfiles',
     "django_extensions",
     "rest_framework",
     "rest_framework_simplejwt",
+    'django.contrib.humanize',
     "api_auth",
     "application",
+    "customtools",
+    "whitenoise.runserver_nostatic",
 ]
 
 MIDDLEWARE = [
@@ -76,6 +81,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 # Rest & Authentication
@@ -96,23 +103,6 @@ INTERNAL_BASE_URL = (
     else ""
 )
 
-AUTH_CONFIG = {
-
-    "S2S": {
-        "sign": {
-            "type": "OAUTH",
-            "CLIENT_ID": "BvMidR0TCQxp5QwI4bCiv69eA5cbPdF4ArjEI0jj",
-            "SECRET": (
-                "vP735g66o38hhD1jsCHuLv5fQvp04TR5RQLwOy3lz8rJywToKSFQ3qgnlqpon"
-                "KagWU15yP9gT8l2kq24sSLhVJOjyyg8EuzEuRNwExsnSGj3i5ZXVVSIDtCt7MxrF29H",
-            ),
-            "ORGANIZATION_TOKEN": (
-                "866959ea84cefbc0fc185ecd124126aed8d6a4bb209a4865c28e94695db1e34d",
-            ),
-            "URL": "",
-        },
-    }
-}
 
 
 # -----
@@ -122,7 +112,10 @@ ROOT_URLCONF = "server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            'templates',
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -140,10 +133,24 @@ WSGI_APPLICATION = "server.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static", "static_dirs"),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_root")
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 

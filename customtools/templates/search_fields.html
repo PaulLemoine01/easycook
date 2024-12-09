@@ -1,0 +1,13 @@
+{% load customtags %}
+{% load customform %}
+
+{% for field in dynamic_search_form %}
+    {% include 'stack_field.html' %}
+{% endfor %}
+
+<script>
+    $(document).ready(function () {
+        initializeSelect2()
+        initializeDateRangePicker()
+    })
+</script>

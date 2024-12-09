@@ -1,0 +1,2 @@
+{% load customtags %}
+class="sorting text-primary nowrap {{ classes|default_if_none:"" }} {% if request.GET.order == slug %} sorting_desc{% elif slug in request.GET.order %} sorting_asc{% endif %}{% if center %} text-center{% endif %}" onclick="location.href='?{% url_replace_with_inverse slug %}'"

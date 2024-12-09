@@ -1,0 +1,121 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block metatitle %}{% endblock %}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'dist/css/tabler.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}?{% now 'YmdH' %}">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css' %}">
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }
+    </style>
+
+    {% block head_extra %}
+    {% endblock %}
+</head>
+{% block body %}
+    <script src="{% static 'plugins/jquery-3.6.1.min.js' %}"></script>
+    <body class="theme-light">
+    <div class="page">
+        {% include 'navigation.html' %}
+        {% block wrapper %}
+            <div class="page-wrapper">
+                <div class="page-header d-print-none">
+                    <div class="container-xl">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-12 col-md">
+                                {% block pretitle %}
+                                        <div class="page-pretitle ">Admin</div>
+                                {% endblock %}
+                                <h2 class="page-title">{% block title %}{% endblock %}</h2>
+                            </div>
+                            <!-- Page title actions -->
+                            <div class="col-auto ms-auto d-print-none">
+                                <div class="btn-list">
+                                    {% block titlebtn %}
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body ">
+                    <div class="container-xl">
+
+                        {% block content %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+                <footer class="footer footer-transparent d-print-none">
+                    <div class="container-xl">
+                        <div class="row text-center align-items-center flex-row-reverse">
+                            <div class="col-lg-auto ms-lg-auto">
+                            </div>
+                            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                                <ul class="list-inline list-inline-dots mb-0">
+                                    <li class="list-inline-item">
+                                        Version V0 -
+                                        <script>
+                                            var d = new Date();
+                                            var n = d.getFullYear();
+                                            document.write(n);
+                                        </script>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        {% endblock %}
+    </div>
+    <div style="display:none;" id="loader">
+        <div class="d-flex flex-column bg-light opacity-95" style="position:fixed;top:0;right:0;left:0;bottom:0;">
+            <div class="page page-center">
+                <div class="container container-slim py-4">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <a href="." class="navbar-brand navbar-brand-autodark"><img src="{% static 'img/logo.png' %}" height="36" alt=""></a>
+                        </div>
+                        <div class="text-muted mb-3">Chargement</div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar progress-bar-indeterminate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'dist/js/tabler.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-3.6.1.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/select2.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/fr.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'plugins/moment.min.js' %}"></script>
+    <script src="{% static 'plugins/fslightbox.js' %}"></script>
+    <script src="{% static 'plugins/daterangepicker/daterangepicker.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.fr.min.js"></script>
+
+
+    {% block js_extra %}
+    {% endblock %}
+    </body>
+{% endblock %}
+</html>

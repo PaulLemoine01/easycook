@@ -1,0 +1,33 @@
+<div class="card-body border-bottom ">
+    <form action="" method="get" id="searchform">
+        <div class="row">
+            {% for field in search_form %}
+                <div class="{% if field.field.widget.attrs.column %}{{ field.field.widget.attrs.column }}{% else %}col-md-3{% endif %}">
+                    {% include 'stack_field.html' %}
+                </div>
+            {% endfor %}
+            {% if not hide_button %}
+                <div class="col-md-2 mb-3 mt-auto">
+                    <button type="submit" class="btn btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                             fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+                            <path d="M21 21l-6 -6"/>
+                        </svg>
+                    </button>
+                    {% if request.GET %}
+                        <a href="?" class="btn btn-icon btn-dark">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M18 6l-12 12"/>
+                                <path d="M6 6l12 12"/>
+                            </svg>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
