@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 
 
-from server import settings
+from easycook import settings
 
 urlpatterns = [
     path('health/', views.health_check, name='health_check'),

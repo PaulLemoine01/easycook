@@ -10,7 +10,7 @@ import urllib
 
 from django.utils.safestring import mark_safe
 
-from server import settings
+from easycook import settings
 
 register = template.Library()
 

@@ -107,7 +107,7 @@ INTERNAL_BASE_URL = (
 
 # -----
 
-ROOT_URLCONF = "server.urls"
+ROOT_URLCONF = "easycook.urls"
 
 TEMPLATES = [
     {
