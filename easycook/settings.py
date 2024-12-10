@@ -132,7 +132,7 @@ WSGI_APPLICATION = "server.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+#
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
