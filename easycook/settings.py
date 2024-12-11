@@ -154,5 +154,5 @@ DATABASES = {
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://web-production-d9e3.up.railway.app"
+    "https://easycook.up.railway.app"
 ]
