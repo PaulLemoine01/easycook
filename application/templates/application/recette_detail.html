@@ -23,6 +23,34 @@
             height: 92%;
         }
     </style>
+    <style>
+        .step-item {
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+
+        .step-title {
+            transition: color 0.3s ease-in-out;
+        }
+
+        .ordre-etape {
+            transition: transform 0.3s ease, opacity 0.3s ease; /* Transition pour animation */
+        }
+
+        .ordre-etape.change {
+            transform: scale(1.3); /* Animation de "zoom" temporaire */
+            opacity: 0.7; /* Légère transparence temporaire */
+        }
+
+        .step-content {
+            transition: opacity 0.3s ease-in-out; /* Transition pour affichage du contenu */
+        }
+
+        .step-content.fade {
+            opacity: 0; /* Fade out pour transition */
+        }
+    </style>
+
 {% endblock %}
 
 {% block wrapper %}
@@ -53,9 +81,9 @@
                     </div>
                 </div>
                 <div class="px-4" style="height: 100%">
-                    <div class="card scrollable scroll-y h-100">
+                    <div class="card h-100 scrollable scroll-y">
                         <div class="card-header mt-0">
-                            <h3 class="card-title">{{ object }}</h3>
+                            <h3 class="card-title p-3" style="font-size: 26px;">{{ object }}</h3>
                             <div class="card-actions">
                                 <button id="goFullscreen" class="btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -72,14 +100,13 @@
                                     </svg>
                                     Commencer la recette
                                 </button>
-                                <button id="exitFullscreen" class="btn d-none">
+                                <button id="exitFullscreen" class="btn d-none btn-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                          stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                         <path d="M18 6l-12 12"/>
                                         <path d="M6 6l12 12"/>
                                     </svg>
-                                    Sortir
                                 </button>
                             </div>
                         </div>
@@ -95,7 +122,7 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                            <div class="d-flex flex-row flex-column justify-content-around">
+                            <div id="steps" class="d-flex flex-row flex-column justify-content-around">
                                 {% for etape in object.etapes.all %}
                                     <div class="row pt-4">
                                         <div class="col-2 d-flex justify-content-center align-items-center">
@@ -107,14 +134,26 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                            <div class="card-body d-none">
-                                <ul class="steps steps-counter steps-vertical" style="height: 80vh">
+                            <div id="stepsFullScreen" class="d-none flex-column">
+                                <ul class="steps steps-counter steps-azure my-3">
                                     {% for etape in object.etapes.all %}
-                                        <li class="step-item {% if forloop.first %}active{% endif %}" style="min-height: 20px"></li>
+                                        <li class="step-item flex-grow-1 {% if forloop.first %}active{% endif %}"
+                                            data-content="{{ etape.content }}"
+                                            style="min-height: 20px"></li>
                                     {% endfor %}
-                                    {{ object.etapes.first.content }}
                                 </ul>
+                                <div class="d-flex flex-column justify-content-between w-100">
+                                    <div><h3 style="font-size: 26px; margin-top: 40px">Étape <span id="ordre-etape">1</span></h3></div>
+                                    <div class="step-content py-6" style="font-size: 18px">
+                                        {{ object.etapes.first.content }}
+                                    </div>
+                                    <div class="navigation-buttons">
+                                        <button class="prev-step btn">️Précédente</button>
+                                        <button class="next-step btn">️Suivante</button>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -162,11 +201,17 @@
         const fullscreenDiv = document.getElementById('fullscreenDiv');
         const goFullscreenButton = document.getElementById('goFullscreen');
         const exitFullscreenButton = document.getElementById('exitFullscreen');
+        const steps = document.getElementById('steps');
+        const stepsFullScreen = document.getElementById('stepsFullScreen');
 
         // Activate fullscreen for the div
         goFullscreenButton.addEventListener('click', () => {
             goFullscreenButton.classList.add('d-none');
             exitFullscreenButton.classList.remove('d-none');
+            steps.classList.add('d-none');
+            fullscreenDiv.style.backgroundColor = '#f1f1f3';
+            stepsFullScreen.classList.remove('d-none');
+            stepsFullScreen.classList.add('d-flex');
             if (fullscreenDiv.requestFullscreen) {
                 fullscreenDiv.requestFullscreen();
             } else if (fullscreenDiv.webkitRequestFullscreen) { // For Safari
@@ -180,6 +225,8 @@
         exitFullscreenButton.addEventListener('click', () => {
             goFullscreenButton.classList.remove('d-none');
             exitFullscreenButton.classList.add('d-none');
+            steps.classList.remove('d-none');
+            stepsFullScreen.classList.add('d-none');
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) { // For Safari
@@ -189,4 +236,44 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const steps = document.querySelectorAll(".step-item");
+            const stepContent = document.querySelector(".step-content");
+            const stepNumber = document.querySelector("#ordre-etape");
+            const prevButton = document.querySelector(".prev-step");
+            const nextButton = document.querySelector(".next-step");
+
+            let currentStep = 0;
+
+            function updateStep(newIndex) {
+                if (newIndex < 0 || newIndex >= steps.length) return;
+                stepContent.classList.add("fade");
+
+                setTimeout(() => {
+                    steps[currentStep].classList.remove("active");
+                    currentStep = newIndex;
+                    steps[currentStep].classList.add("active");
+
+                    const newContent = steps[currentStep].getAttribute("data-content");
+                    stepContent.innerHTML = newContent;
+                    stepContent.classList.remove("fade"); // Fade in
+                    console.log(stepNumber)
+                    console.log(stepNumber.textContent)
+                    stepNumber.textContent = `${currentStep + 1}`;
+                    console.log(stepNumber.textContent)
+                    stepNumber.classList.add("change");
+                    setTimeout(() => {
+                        stepNumber.classList.remove("change");
+                    }, 300);
+                }, 300);
+            }
+
+            prevButton.addEventListener("click", () => updateStep(currentStep - 1));
+            nextButton.addEventListener("click", () => updateStep(currentStep + 1));
+            updateStep(currentStep);
+        });
+    </script>
+
+
 {% endblock %}

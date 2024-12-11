@@ -206,6 +206,8 @@ class Recette(models.Model):
     def __str__(self):
         return self.nom
 
+    class Meta:
+        ordering = ['-created_date']
 
 class Video(models.Model):
     photo = models.ImageField(upload_to='videos', null=True, blank=True)
