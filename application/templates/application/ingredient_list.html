@@ -100,7 +100,7 @@
                             <tbody>
                             {% for object in object_list %}
                                 <tr class="clickable-row">
-                                    <td class="nowrap"><span class="avatar avatar-xl" style="background-image: url('{{ object.photo.url }}')"></span></td>
+                                    <td class="nowrap"><span class="avatar avatar-xl" {% if object.photo %}style="background-image: url('{{ object.photo.url }}')"{% endif %}></span></td>
                                     <td class="{% if not field.get_internal_type == 'TextField' %}nowrap{% endif %} p-2">
                                         {{ object.nom_singulier }}
                                         <a href="{{ object.get_list_url }}"></a>

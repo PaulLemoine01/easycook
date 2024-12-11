@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.urls import reverse
 
+from difflib import get_close_matches
 
 class Ingredient(models.Model):
     nom_singulier = models.CharField(max_length=30, null=False, blank=False)
@@ -25,6 +26,14 @@ class Ingredient(models.Model):
         unique=True,
         editable=False
     )
+    def get_absolute_url(self):
+        return reverse('application:ingredient-detail', args=(self.uuid,))
+
+    def get_update_url(self):
+        return reverse('application:ingredient-update', args=(self.uuid,))
+
+    def get_list_url(self):
+        return reverse('application:ingredient-update', args=(self.uuid,))
 
 class Influenceur(models.Model):
     photo_profil = models.ImageField(upload_to='profils/', null=True)
@@ -96,6 +105,20 @@ class Quantite(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.SET_NULL, null=True)
     quantite = models.CharField(max_length=30, null=False, blank=False, verbose_name="Quantité")
     unite_mesure = models.CharField(max_length=30, null=False, blank=False, verbose_name="")
+
+    def get_thumbnail(self):
+        """
+        Retourne le thumbnail le plus proche à partir des ingrédients scrappés.
+        """
+        ingredients = Ingredient.objects.filter(photo__isnull=False).exclude(photo='')
+        noms_ingredients = [ingredient.nom_singulier for ingredient in ingredients]
+
+        match = get_close_matches(self.ingredient.nom_singulier, noms_ingredients, n=1, cutoff=0.6)
+
+        if match:
+            ingredient = ingredients.get(nom_singulier=match[0])
+            return ingredient.photo.url
+        return None
 
     created_date = models.DateTimeField(
         auto_now_add=True,

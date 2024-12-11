@@ -9,6 +9,7 @@ app_name = 'application'
 urlpatterns = [
     path("influenceur/refresh/videos", views.ActualiserVideos.as_view(), name="influenceur-refresh-videos"),
     path("analyse/video", views.AnalyseVideo.as_view(), name="analyse-video"),
+    path("recette/detail/<uuid:uuid>/", views.RecetteDetail.as_view(), name="recette-detail"),
 
     #API
     path("api/application/test-response/", views.test_response, name="generate_response"),

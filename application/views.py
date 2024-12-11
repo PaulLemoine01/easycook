@@ -13,7 +13,7 @@ from django.core.management import call_command
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -204,6 +204,13 @@ class AnalyseVideo(View):
         call_command('analyse_video', video_uuid, verbosity=1)
 
         return redirect(reverse("application:influenceur-list"))
+
+class RecetteDetail(DetailView):
+    model = Recette
+    template_name = "application/recette_detail.html"
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
 
 # @api_view(["POST"])
 # def dummy_endpoint(request):

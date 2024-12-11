@@ -9,7 +9,6 @@ __pycache__/
 *.log
 *.pot
 *.py[cod]
-*.sqlite3
 *.pdb
 *.egg-info/
 local_settings.py

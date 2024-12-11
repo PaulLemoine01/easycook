@@ -43,8 +43,9 @@ def build_recipe(description, speech):
                 A partir des informations transmises, il faut recréer la recette de la vidéo.
                 Tu es donc un chef cuisiner et tu as écrit de nombreux livres de recettes tout au long de tavie. Cela fait plus de 20 ans que tu travaille dans ce domaine. Ton objectif est de créer des recettes les mieux organisées, simple à comprendre et facile à refaire.
                 Il faudra aussi faire une estimation des quantitées et du nombre de personne si ce n'est pas précisé. La recette obtenu sera la plus complète possible.
-                Exemple de quantités: [{{"ingredient": "tomates", "quantite": 3, "unite": "}}, {{"ingredient": "sucre", "quantite": 3, "unite": "cuillères à soupe"}}, {{"ingredient": "sel", "quantite": 1, "unite": "pincée"}}, {{"ingredient": "farine", "quantite": 300, "unite":"g" ...}}            
-
+                Exemple de quantités: [{{"ingredient": "tomates", "quantite": 3, "unite": ""}}, {{"ingredient": "sucre", "quantite": 3, "unite": "cuillères à soupe"}}, {{"ingredient": "sel", "quantite": 1, "unite": "pincée"}}, {{"ingredient": "farine", "quantite": 300, "unite":"g" ...}}            
+                L'unité peut être vide si l'ingrédient n'a pas d'unité de mesure.
+                
                 Il faudra aussi caractériser la recettes avec des tags. Les tags ne doivent pas être des ingredients. Maximum 3 tags.
                 Exemple de tags: végétarien, entrée, plat, dessert, végétalien, végan ...
 
