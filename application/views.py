@@ -177,7 +177,7 @@ class ActualiserVideos(View):
             print("beginning saving")
             for data_video in data:
                 if data_video["video_url"]:
-                    video, _ = Video.objects.get_or_create(instagram_id=data_video["id"], instagram_shortcode=data_video["shortcode"])
+                    video, created = Video.objects.get_or_create(instagram_id=data_video["id"], instagram_shortcode=data_video["shortcode"])
                     video.influenceur = influenceur
                     video.nb_vue = data_video["views"]
                     video.nb_likes = data_video["likes"]
@@ -186,7 +186,7 @@ class ActualiserVideos(View):
                     video.save()
                     total = time.time()
                     response = requests.get(data_video["src"])
-                    if response.status_code == 200:
+                    if response.status_code == 200 and created:
                         img_temp = NamedTemporaryFile(delete=True)
                         img_temp.write(response.content)
                         img_temp.flush()

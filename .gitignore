@@ -37,7 +37,6 @@ Thumbs.db
 
 # Static and media files
 staticfiles/
-media/
 
 # Migrations
 */migrations/__pycache__
